@@ -1,0 +1,27 @@
+version: "3.5"
+services:
+  go:
+    image: golang:1.20
+    container_name: go
+    restart: always
+    volumes:
+      - ./go:/go/src/distributed-web-crawler
+    working_dir: /go/src/distributed-web-crawler
+    command: [ "tail", "-f", "/dev/null" ]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  node:
+    image: apify/actor-node-puppeteer-chrome:latest
+    container_name: node
+    volumes:
+      - ./go:/go/src/distributed-web-crawler
+    restart: always
+    command: [ "tail", "-f", "/dev/null" ]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
