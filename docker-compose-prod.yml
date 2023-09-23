@@ -1,20 +1,31 @@
 version: "3.5"
 services:
-  go:
-    image: golang:1.20
-    container_name: go
+  crawler:
+    image: ghcr.io/tonywangcn/distributed-web-crawler:go-crawler-latest
+    container_name: crawler
     restart: always
     env_file:
       - .env
-    volumes:
-      - ./go/src:/go/src/github.com/tonywangcn/distributed-web-crawler
-    working_dir: /go/src/github.com/tonywangcn/distributed-web-crawler
-    command: [ "tail", "-f", "/dev/null" ]
+    command: [ "/main"]
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+
+  worker:
+    image: ghcr.io/tonywangcn/distributed-web-crawler:go-crawler-latest
+    container_name: worker
+    restart: always
+    env_file:
+      - .env
+    command: [ "/main", "-w", "worker", "-c", "2" ]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   node:
     image: apify/actor-node-puppeteer-chrome:latest
     container_name: node

@@ -1,7 +1,7 @@
 # Dockerfile
 FROM golang:1.20-buster AS builder
 RUN mkdir /src
-ADD ./src/ /src
+ADD ./go/src/ /src
 WORKDIR /src
 
 RUN go env -w GO111MODULE=auto
