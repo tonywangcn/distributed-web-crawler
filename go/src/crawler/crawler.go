@@ -26,6 +26,7 @@ import (
 const GO_CRAWLER_TASK_QUEUE = "go-crawler:task:queue"
 const GO_CRAWLER_RESULT_QUEUE = "go-crawler:result:queue"
 const GO_CRAWLER_REQUEST_STATS = "go-crawler:request:stats"
+const GO_CRAWLER_REQUEST_HOSTNAME_STATS = "go-crawler:request:hostname:stats"
 const CRAWLER_BLOOM_KEY = "crawler:bloom"
 const OUT_LINK_QUEUE = "crawler:outlink:queue"
 const OUT_LINK_HOST_COUNTER = "outlink:host:counter"
@@ -194,6 +195,9 @@ func scrape() {
 
 	})
 	c.OnResponse(func(r *colly.Response) {
+		if err = redis.HIncryBy(GO_CRAWLER_REQUEST_HOSTNAME_STATS, hostname, 1); err != nil {
+			log.Error(err.Error())
+		}
 		content := parse(r)
 		content.Domain = hostname
 		content.URL = r.Request.URL.String()

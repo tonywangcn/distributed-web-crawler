@@ -19,6 +19,7 @@ OUT_LINK_QUEUE = "crawler:outlink:queue"
 CRAWLER_BLOOM_KEY = "crawler:bloom"
 GO_CRAWLER_RESULT_QUEUE = "go-crawler:result:queue"
 GO_CRAWLER_REQUEST_STATS = "go-crawler:request:stats"
+GO_CRAWLER_REQUEST_HOSTNAME_STATS = "go-crawler:request:hostname:stats"
 
 
 def del_redis_key(key):
@@ -35,6 +36,10 @@ def gen_go_crawler_task(url):
 
 def get_domain_stats():
     return r.hgetall(OUT_LINK_HOST_COUNTER)
+
+
+def get_stats(key):
+    return r.hgetall(key)
 
 
 def get_queue(queue):
@@ -103,4 +108,6 @@ def filter_url():
 if __name__ == "__main__":
     gen_go_crawler_task("https://www.bbc.co.uk/")
     # cleanup_redis()
-    # print(get_domain_stats())
+    # print(get_stats(GO_CRAWLER_REQUEST_HOSTNAME_STATS))
+    # print("+++++++++++++++++")
+    # print(get_stats(GO_CRAWLER_REQUEST_STATS))
