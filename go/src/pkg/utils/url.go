@@ -2,6 +2,7 @@ package utils
 
 import (
 	"net/url"
+	"strings"
 
 	"github.com/tonywangcn/distributed-web-crawler/pkg/log"
 )
@@ -10,6 +11,8 @@ var THIRD_PARTY_CAMPAIGN_PARAMS = []string{"at_ptr_type", "at_ptr_name", "at_pro
 var THIRD_PARTY_CAMPAIGN_PARAMS_MAPPING = make(map[string]bool)
 var INVALID_HOSTNAMES = []string{"localhost", ""}
 var INVALID_HOSTNAMES_MAPPING = make(map[string]bool)
+var FILES_EXT_LIST = []string{".pdf", ".png", ".xml", ".doc", ".docx", ".jpg", ".jpeg", ".gif", ".cfg", ".zip", ".xls", "xlsx", ".rss"}
+var FILES_EXT_MAPPING = make(map[string]bool)
 
 func init() {
 	for _, val := range THIRD_PARTY_CAMPAIGN_PARAMS {
@@ -17,6 +20,10 @@ func init() {
 	}
 	for _, val := range INVALID_HOSTNAMES {
 		INVALID_HOSTNAMES_MAPPING[val] = true
+	}
+
+	for _, val := range FILES_EXT_LIST {
+		FILES_EXT_MAPPING[val] = true
 	}
 }
 
@@ -48,6 +55,22 @@ func CleanUpUrlParam(u *url.URL) string {
 
 func IsValidHostname(l string) bool {
 	if _, ok := INVALID_HOSTNAMES_MAPPING[l]; ok {
+		return false
+	}
+	return true
+}
+
+func IsValidPath(l string) bool {
+	str := strings.Split(l, ".")
+	if len(str) <= 1 {
+		return true
+	}
+	ext := strings.ToLower(str[len(str)-1])
+	if len(ext) <= 1 {
+		return true
+	}
+
+	if _, ok := FILES_EXT_MAPPING[ext]; ok {
 		return false
 	}
 	return true

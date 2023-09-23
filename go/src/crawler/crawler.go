@@ -229,6 +229,10 @@ func scrape() {
 			log.Error("illegal url %s, hostname %s", link, u.Hostname())
 			return
 		}
+		if !utils.IsValidPath(u.Path) {
+			log.Error("illegal path %s, hostname %s", u.Path, u.Hostname())
+			return
+		}
 		link = utils.CleanUpUrlParam(u)
 		ok, err := redis.BloomAdd(CRAWLER_BLOOM_KEY, crypto.Md5(strings.Replace(strings.TrimSuffix(link, "/"), "http://", "https://", 1)))
 		if err != nil {
