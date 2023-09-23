@@ -106,8 +106,7 @@ def filter_url():
 
 
 if __name__ == "__main__":
-    gen_go_crawler_task("https://www.bbc.co.uk/")
+    # gen_go_crawler_task("https://www.bbc.co.uk/")
     # cleanup_redis()
-    # print(get_stats(GO_CRAWLER_REQUEST_HOSTNAME_STATS))
-    # print("+++++++++++++++++")
-    # print(get_stats(GO_CRAWLER_REQUEST_STATS))
+    print(get_stats(GO_CRAWLER_REQUEST_HOSTNAME_STATS))
+    # print(get_stats(OUT_LINK_HOST_COUNTER))
