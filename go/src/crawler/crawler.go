@@ -185,6 +185,7 @@ func scrape() {
 	q, _ := queue.New(50, storage)
 
 	// Process any errors caused by timeout, status code >= 400
+	// Exponential Backoff, use E as the base.
 	c.OnError(func(r *colly.Response, err error) {
 		retriesLeft := CRAWLER_MAX_RETRIES
 		if x, ok := r.Ctx.GetAny("retriesLeft").(int64); ok {
