@@ -111,6 +111,7 @@ func SyncCounterToMongo() {
 
 }
 
+// Reserve bloom key if not exist. With error rate  0.0000001 and total 1000000000 items, the memory usage is 3.9 GB.
 func reserveBloomKey() {
 	if ok := redis.Exists(CRAWLER_BLOOM_KEY); ok {
 		return
@@ -129,20 +130,25 @@ func Scrape(n int) {
 	}
 }
 
+// the main function of scraping.
 func scrape() {
+
+	// recieve task from redis queue
 	u := redis.LPop(GO_CRAWLER_TASK_QUEUE)
 	if len(u) == 0 {
 		log.Error("invalid url %s", u)
 		return
 	}
 
+	// parse hostname from url
 	var hostname = utils.GetHostname(u)
 
+	// check hostname if valid
 	if !utils.IsValidHostname(hostname) {
 		log.Error("illegal url %s, hostname %s", u, hostname)
 		return
 	}
-
+	// read robots.txt file and check url is allowed
 	robo := robots.New("http://" + hostname)
 	if !robo.AgentAllowed("GoogleBot", u) {
 		log.Error("URL is not allowed to visit in robots.txt. URL: %s", u)
@@ -219,6 +225,7 @@ func scrape() {
 			return
 		}
 
+		// read robots.txt file and check url is allowed
 		if !robo.AgentAllowed("GoogleBot", link) {
 			log.Error("URL is not allowed to visit in robots.txt. URL: %s", link)
 			return

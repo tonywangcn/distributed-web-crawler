@@ -14,6 +14,7 @@ var INVALID_HOSTNAMES_MAPPING = make(map[string]bool)
 var FILES_EXT_LIST = []string{".pdf", ".png", ".xml", ".doc", ".docx", ".jpg", ".jpeg", ".gif", ".cfg", ".zip", ".xls", "xlsx", ".rss"}
 var FILES_EXT_MAPPING = make(map[string]bool)
 
+// build mapping for performance from array
 func init() {
 	for _, val := range THIRD_PARTY_CAMPAIGN_PARAMS {
 		THIRD_PARTY_CAMPAIGN_PARAMS_MAPPING[val] = true
@@ -32,6 +33,7 @@ func GetHostname(l string) string {
 		log.Error("empty url")
 		return ""
 	}
+	// Use ParseRequestURI instead of parse, since it has a more strict validation policy against URL
 	u, err := url.ParseRequestURI(l)
 	if err != nil {
 		log.Error("illegal url %s, err:%s", l, err.Error())
@@ -40,7 +42,7 @@ func GetHostname(l string) string {
 	return u.Hostname()
 }
 
-// clean up third party camaign params and hash sign
+// clean up third party campaign params and hash sign to ensure no duplicated urls added because a different campaign value.
 func CleanUpUrlParam(u *url.URL) string {
 	values := u.Query()
 	for k := range values {
@@ -60,6 +62,7 @@ func IsValidHostname(l string) bool {
 	return true
 }
 
+// check if the url is a link to a file. we need webpages instead of images, pdf, docs, etc.
 func IsValidPath(l string) bool {
 	str := strings.Split(l, ".")
 	if len(str) <= 1 {
